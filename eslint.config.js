@@ -1,4 +1,4 @@
-// @ts-check
+
 const eslint = require('@eslint/js');
 const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
@@ -30,7 +30,7 @@ module.exports = tseslint.config(
           style: 'kebab-case',
         },
       ],
-      '@typescript-eslint/max-lines-per-function': [
+      'max-lines-per-function': [
         'error',
         { max: 10, skipBlankLines: true, skipComments: true },
       ],
@@ -41,4 +41,10 @@ module.exports = tseslint.config(
     extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
     rules: {},
   },
+  {
+    files: ['**/*.spec.ts', '**/karma.conf.js'],
+    rules: {
+      'max-lines-per-function': 'off',
+    },
+  }
 );
