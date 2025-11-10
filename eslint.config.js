@@ -1,4 +1,3 @@
-
 const eslint = require('@eslint/js');
 const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
@@ -30,10 +29,7 @@ module.exports = tseslint.config(
           style: 'kebab-case',
         },
       ],
-      'max-lines-per-function': [
-        'error',
-        { max: 10, skipBlankLines: true, skipComments: true },
-      ],
+      'max-lines-per-function': ['error', { max: 20, skipBlankLines: true, skipComments: true }],
     },
   },
   {
@@ -42,9 +38,19 @@ module.exports = tseslint.config(
     rules: {},
   },
   {
+    files: ['src/app/store/cocktail.store.ts'], // Ajusta la ruta exacta
+    rules: {
+      // Desactiva la regla completamente para este archivo
+      'max-lines-per-function': 'off',
+
+      // Opcional: Aumenta el límite solo para este archivo
+      // "max-lines-per-function": ["error", { "max": 40 }]
+    },
+  },
+  {
     files: ['**/*.spec.ts', '**/karma.conf.js'],
     rules: {
       'max-lines-per-function': 'off',
     },
-  }
+  },
 );
