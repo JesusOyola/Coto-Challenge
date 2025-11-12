@@ -11,17 +11,17 @@ export class CocktailService {
   private baseUrl = 'https://www.thecocktaildb.com/api/json/v1/1/';
 
   searchByName(name: string): Observable<DrinkApiResponse> {
-    const params = new HttpParams().set('drinkName', name);
+    const params = new HttpParams().set('s', name);
     return this.http.get<DrinkApiResponse>(`${this.baseUrl}search.php`, { params });
   }
 
   searchByIngredient(ingredient: string): Observable<IngredientApiResponse> {
-    const params = new HttpParams().set('ingredientName', ingredient);
+    const params = new HttpParams().set('i', ingredient);
     return this.http.get<IngredientApiResponse>(`${this.baseUrl}filter.php`, { params });
   }
 
-  searchById(id: string): Observable<IngredientApiResponse> {
-    const params = new HttpParams().set('ingredientId', id);
-    return this.http.get<IngredientApiResponse>(`${this.baseUrl}lookup.php`, { params });
+  searchById(id: string): Observable<DrinkApiResponse> {
+    const params = new HttpParams().set('i', id);
+    return this.http.get<DrinkApiResponse>(`${this.baseUrl}lookup.php`, { params });
   }
 }

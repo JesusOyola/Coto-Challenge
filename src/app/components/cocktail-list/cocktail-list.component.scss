@@ -1,0 +1,12 @@
+.list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+.no-results {
+  grid-column: 1 / -1; /* Ocupar todo el ancho */
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2em;
+}
