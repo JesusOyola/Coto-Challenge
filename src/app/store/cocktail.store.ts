@@ -15,7 +15,7 @@ export const CocktailStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withComputed(({ cocktails, favorites, filterOnlyFavorites }) => ({
-    // Retorna true si un cóctel está en favoritos
+    
     isFavorite: computed(
       () => (idDrink: string) => favorites().some((fav) => fav.idDrink === idDrink),
     ),
@@ -25,21 +25,25 @@ export const CocktailStore = signalStore(
       const allCocktails = cocktails();
       const favs = favorites();
       if (filterOnlyFavorites()) {
-        // Muestra solo los favoritos si el flag está activo
-        // Filtramos la lista principal por los IDs de favoritos
+       
         return allCocktails.filter((c) => favs.some((f) => f.idDrink === c.idDrink));
       }
+
+      console.log(allCocktails);
       return allCocktails;
     }),
 
-    // Para saber si la lista de favoritos está vacía
+    
     hasFavorites: computed(() => favorites().length > 0),
   })),
 
-  // 4. Métodos para manipular el estado (actions/reducers)
+  
   withMethods(({ favorites, ...store }) => ({
-    setCocktails(cocktails: Drink[]) {
-      patchState(store, { cocktails, isLoading: false, error: null });
+    setCocktails(cocktails: Drink[] | 'no data found') {
+      const drinks = (typeof cocktails === 'string' && cocktails === 'no data found')
+        ? []
+        : (cocktails as Drink[]);
+      patchState(store, { cocktails: drinks, isLoading: false, error: null });
     },
 
     // Inicia una carga
@@ -52,7 +56,7 @@ export const CocktailStore = signalStore(
       patchState(store, { isLoading: false, error });
     },
 
-    // Añadir/Remover de favoritos (guarda el cóctel completo)
+    // Añadir/Remover de favoritos el cocktail
     toggleFavorite(cocktail: Drink) {
       const currentFavorites = favorites();
       const isFav = currentFavorites.some((fav) => fav.idDrink === cocktail.idDrink);

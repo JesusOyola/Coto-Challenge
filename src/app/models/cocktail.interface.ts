@@ -57,13 +57,10 @@ export interface DrinkApiResponse {
 }
 
 export interface Ingredient {
-  idIngredient: string;
-  strIngredient: string;
-  strDescription: string;
-  strType: string;
-  strAlcohol: string;
-  strABV: string;
+  strDrink: string;
+  strDrinkThumb: string;
+  idDrink: string;
 }
 export interface IngredientApiResponse {
-  ingredients: Ingredient[];
+  drinks: Ingredient[] | null | 'no data found';
 }

@@ -1,1 +1,38 @@
-<p>cocktail-card works!</p>
+<mat-card class="cocktail-card">
+  <a [routerLink]="['/detail', cocktail.idDrink]" class="card-link">
+    <img mat-card-image [src]="cocktail.strDrinkThumb" [alt]="cocktail.strDrink" loading="lazy" />
+
+    <mat-card-header>
+      <mat-card-title>{{ cocktail.strDrink }}</mat-card-title>
+    </mat-card-header>
+  </a>
+
+  <mat-card-actions>
+    <button
+      mat-icon-button
+      (click)="openMenu($event, menuContextual)"
+      [attr.aria-label]="'Opciones para ' + cocktail.strDrink"
+    >
+      <mat-icon>more_vert</mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>
+
+<ng-template #menuContextual>
+  <div class="custom-menu" role="menu" cdkFocusRegionStart>
+    <button
+      mat-menu-item
+      (click)="closeMenu()"
+      [routerLink]="['/detail', cocktail.idDrink]"
+      role="menuitem"
+    >
+      <mat-icon>visibility</mat-icon>
+      <span>Ver detalles</span>
+    </button>
+
+    <button mat-menu-item (click)="toggleFavorite()" role="menuitem">
+      <mat-icon>{{ isFavorite() ? 'favorite' : 'favorite_border' }}</mat-icon>
+      <span>{{ isFavorite() ? 'Remover de favoritos' : 'Añadir a favoritos' }}</span>
+    </button>
+  </div>
+</ng-template>

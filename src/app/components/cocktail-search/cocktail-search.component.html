@@ -1,1 +1,23 @@
-<p>cocktail-search works!</p>
+<form [formGroup]="searchForm" class="search-container" (ngSubmit)="onSubmit()">
+      
+      <mat-form-field appearance="outline" class="select-field">
+        <mat-label>Buscar por</mat-label>
+        <mat-select formControlName="searchType">
+          <mat-option value="name">Nombre</mat-option>
+          <mat-option value="ingredient">Ingrediente</mat-option>
+          <mat-option value="id">ID</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="input-field">
+        <mat-label>Término de Búsqueda</mat-label>
+        <input matInput formControlName="searchTerm" [type]="getInputType()">
+        <mat-error *ngIf="searchForm.get('searchTerm')?.invalid && searchForm.get('searchTerm')?.touched">
+          {{ getErrorMessage() }}
+        </mat-error>
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="searchForm.invalid">
+        Buscar
+      </button> 
+    </form>

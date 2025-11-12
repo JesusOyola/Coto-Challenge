@@ -1,1 +1,52 @@
-<p>home works!</p>
+<mat-toolbar color="primary">
+  <span>Cocktail Bar Manager</span>
+
+  <span class="spacer"></span>
+
+  <button
+    mat-flat-button
+    [color]="filterOnlyFavorites() ? 'accent' : 'basic'"
+    (click)="toggleFavoriteFilter()"
+    [disabled]="!hasFavorites()"
+    aria-label="Mostrar solo tragos favoritos"
+  >
+    <mat-icon>{{ filterOnlyFavorites() ? 'favorite' : 'favorite_border' }}</mat-icon>
+    {{ filterOnlyFavorites() ? 'Mostrar Todos' : 'Mis Favoritos' }}
+  </button>
+</mat-toolbar>
+
+<app-cocktail-search (searchEvent)="onSearch($event)" />
+
+<div class="cocktail-list-container">
+  @if (error()) {
+    <mat-card class="error-message">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <h2>Error al cargar los datos:</h2>
+      <p>{{ error() }}</p>
+    </mat-card>
+  }
+
+  <app-cocktail-list [cocktails]="displayCocktails()" [isLoading]="isLoading()" />
+
+  @if (!isLoading() && filterOnlyFavorites() && displayCocktails().length === 0) {
+    <mat-card class="empty-filter-message">
+      <mat-icon>sentiment_dissatisfied</mat-icon>
+      <h2>No hay favoritos en tu lista.</h2>
+      <p>Añade algunos cócteles para verlos aquí.</p>
+      <button mat-button color="primary" (click)="toggleFavoriteFilter()">Mostrar todos</button>
+    </mat-card>
+  }
+
+  @if (
+    !isLoading() &&
+    !filterOnlyFavorites() &&
+    displayCocktails().length === 0 &&
+    store.lastSearchTerm().length > 0
+  ) {
+    <mat-card class="empty-search-message">
+      <mat-icon>search_off</mat-icon>
+      <h2>Búsqueda sin resultados.</h2>
+      <p>No se encontraron cócteles para "{{ store.lastSearchTerm() }}".</p>
+    </mat-card>
+  }
+</div>
