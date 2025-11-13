@@ -15,7 +15,6 @@ export const CocktailStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withComputed(({ cocktails, favorites, filterOnlyFavorites }) => ({
-    
     isFavorite: computed(
       () => (idDrink: string) => favorites().some((fav) => fav.idDrink === idDrink),
     ),
@@ -25,24 +24,22 @@ export const CocktailStore = signalStore(
       const allCocktails = cocktails();
       const favs = favorites();
       if (filterOnlyFavorites()) {
-       
-        return allCocktails.filter((c) => favs.some((f) => f.idDrink === c.idDrink));
+        return favs;
       }
 
       console.log(allCocktails);
       return allCocktails;
     }),
 
-    
     hasFavorites: computed(() => favorites().length > 0),
   })),
 
-  
   withMethods(({ favorites, ...store }) => ({
     setCocktails(cocktails: Drink[] | 'no data found') {
-      const drinks = (typeof cocktails === 'string' && cocktails === 'no data found')
-        ? []
-        : (cocktails as Drink[]);
+      const drinks =
+        typeof cocktails === 'string' && cocktails === 'no data found'
+          ? []
+          : (cocktails as Drink[]);
       patchState(store, { cocktails: drinks, isLoading: false, error: null });
     },
 

@@ -53,6 +53,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   public readonly error = this.store.error; // Exponer el error del store
 
   ngOnInit(): void {
+    this.store.loadFavoritesFromStorage();
     this._loadInitialData();
     this._setupSearchStream();
   }
