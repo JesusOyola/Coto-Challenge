@@ -1,0 +1,46 @@
+@keyframes pulse {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.skeleton-card {
+  position: relative;
+  max-width: 350px;
+  height: 300px; /* Asegúrate de que coincida con la altura de la tarjeta real */
+
+  // Fondo animado que simula el movimiento de carga
+  background: #f0f0f0;
+  background-image: linear-gradient(to right, #f0f0f0 0%, #e0e0e0 20%, #f0f0f0 40%);
+  background-size: 800px 100%;
+  animation: pulse 1.5s infinite linear;
+}
+
+.skeleton-image {
+  height: 200px; /* Igual que mat-card-image */
+  background-color: rgba(0, 0, 0, 0.05); /* Color de placeholder */
+  width: 100%;
+  display: block;
+}
+
+mat-card-header {
+  height: 50px;
+  display: block;
+  padding: 16px;
+}
+
+.skeleton-title-line {
+  width: 70%;
+  height: 18px;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin-top: 5px;
+  border-radius: 4px;
+}
+
+.skeleton-actions {
+  height: 40px;
+  background-color: transparent;
+}

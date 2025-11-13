@@ -1,9 +1,16 @@
-<div *ngIf="!isLoading" class="list-grid" #scrollContainer>
-  @for (cocktail of cocktails; track cocktail.idDrink) {
-    <app-cocktail-card [cocktail]="cocktail" />
-  }
+<div class="list-grid" #scrollContainer>
+  @if (isLoading && cocktails.length === 0) {
+    @for (item of skeletonItems; track item) {
+      <app-cocktail-card-skeleton />
+    }
 
-  @if (cocktails.length === 0) {
-    <p class="no-results">No se encontraron cócteles.</p>
+  } @else {
+    @for (cocktail of cocktails; track cocktail.idDrink) {
+      <app-cocktail-card [cocktail]="cocktail" />
+    }
+
+    @if (cocktails.length === 0 && !isLoading) {
+      <p class="no-results">No se encontraron cócteles.</p>
+    }
   }
 </div>
