@@ -17,7 +17,8 @@
 
 <app-cocktail-search (searchEvent)="onSearch($event)" />
 
-<div class="cocktail-list-container">
+
+<div class="cocktail-list-container" #scrollContainer>
   @if (error()) {
     <mat-card class="error-message">
       <mat-icon color="warn">error_outline</mat-icon>

@@ -1,12 +1,10 @@
-/* src/app/pages/home/home.component.css */
-
 .spacer {
-  flex: 1 1 auto; /* Esto empuja los elementos restantes al otro lado */
+  flex: 1 1 auto;
 }
 
 .cocktail-list-container {
   padding: 0 20px;
-  max-width: 1400px; /* Limita el ancho máximo para grillas grandes */
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -17,7 +15,7 @@
   margin: 20px auto;
   border: 1px solid #f0f0f0;
   border-radius: 8px;
-  background-color: #fff8e1; /* Fondo suave para alertas */
+  background-color: #fff8e1;
 }
 
 .error-message mat-icon,
@@ -30,7 +28,7 @@
 }
 
 .error-message {
-    border-color: #ffccbc;
-    background-color: #ffebee;
-    color: #c62828; /* Rojo oscuro de Material */
+  border-color: #ffccbc;
+  background-color: #ffebee;
+  color: #c62828;
 }

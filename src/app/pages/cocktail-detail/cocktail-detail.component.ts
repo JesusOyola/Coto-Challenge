@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, signal, inject, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { CommonModule, Location } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { Drink, IngredientDetail } from '../../models/cocktail.interface';
 import { Subscription, map } from 'rxjs';
 import { CocktailService } from '../../services/cocktail.service';
@@ -19,7 +19,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    RouterLink,
+    
   ],
   templateUrl: './cocktail-detail.component.html',
   styleUrl: './cocktail-detail.component.scss',
@@ -27,6 +27,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class CocktailDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private cocktailService = inject(CocktailService);
+  private location = inject(Location);
 
   public cocktailDetail = signal<Drink | null>(null);
   public isLoading = signal(false);
@@ -91,6 +92,9 @@ export class CocktailDetailComponent implements OnInit, OnDestroy {
         this.isLoading.set(false);
       },
     });
+  }
+  goBack(): void {
+    this.location.back();
   }
 
   ngOnDestroy(): void {

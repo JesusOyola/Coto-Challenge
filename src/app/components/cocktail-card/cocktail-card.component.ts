@@ -49,7 +49,7 @@ export class CocktailCardComponent {
       return;
     }
 
-    //  Crea y configura la referencia del Overlay
+    
     this.overlayRef = this._createOverlayRef();
 
     //  Adjunta el menú y configura el cierre
