@@ -1,13 +1,11 @@
 <div class="detail-container">
   @if (isLoading()) {
-    <div class="loading-overlay">
-      <mat-progress-spinner diameter="50" mode="indeterminate"></mat-progress-spinner>
-    </div>
 
   } @else if (cocktailDetail()) {
     <mat-card class="detail-card">
       <div class="detail-header">
         <img
+        class="drink-image"
           mat-card-image
           [src]="cocktailDetail()!.strDrinkThumb"
           [alt]="cocktailDetail()!.strDrink"
@@ -19,9 +17,7 @@
             {{ cocktailDetail()!.strCategory }}</mat-card-subtitle
           >
         </div>
-      </div>
-
-      <mat-card-content class="content-section">
+        <mat-card-content class="content-section">
         <h3>Instrucciones de Preparación</h3>
         <p>{{ cocktailDetail()!.strInstructions }}</p>
 
@@ -37,7 +33,10 @@
             </li>
           }
         </ul>
-      </mat-card-content>
+      </mat-card-content>                                      
+      </div>
+
+      
 
       <mat-card-actions>
         <button mat-flat-button color="primary" [routerLink]="['/']">
@@ -46,7 +45,6 @@
         </button>
       </mat-card-actions>
     </mat-card>
-
   } @else if (error()) {
     <p class="error-message">{{ error() }}</p>
   }
