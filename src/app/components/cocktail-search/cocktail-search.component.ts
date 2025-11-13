@@ -35,12 +35,6 @@ export class CocktailSearchComponent {
       this.searchType.set(type);
       this.updateValidators(type);
     });
-
-    this.searchForm.controls.searchTerm.valueChanges.subscribe(() => {
-      if (this.searchForm.valid) {
-        this.onSubmit();
-      }
-    });
   }
 
   // Define el tipo de input basado en el control

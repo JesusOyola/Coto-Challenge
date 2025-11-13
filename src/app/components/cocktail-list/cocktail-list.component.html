@@ -1,11 +1,4 @@
-<div
-  *ngIf="!isLoading"
-  class="list-grid"
-  #scrollContainer
-  infiniteScroll
-  [infiniteScrollDistance]="2"
-  [infiniteScrollThrottle]="50"
->
+<div *ngIf="!isLoading" class="list-grid" #scrollContainer>
   @for (cocktail of cocktails; track cocktail.idDrink) {
     <app-cocktail-card [cocktail]="cocktail" />
   }

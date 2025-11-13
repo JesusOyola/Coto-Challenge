@@ -64,3 +64,8 @@ export interface Ingredient {
 export interface IngredientApiResponse {
   drinks: Ingredient[] | null | 'no data found';
 }
+
+export interface IngredientDetail{
+  measure: string;
+  ingredient: string;
+}

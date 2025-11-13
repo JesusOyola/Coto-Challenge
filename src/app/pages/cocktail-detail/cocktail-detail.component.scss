@@ -1,0 +1,57 @@
+.detail-container {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+  min-height: 80vh;
+}
+
+.detail-card {
+  max-width: 800px;
+  width: 100%;
+  margin: 20px;
+}
+
+.detail-header {
+  display: flex;
+  flex-direction: column;
+}
+
+mat-card-image {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.title-section {
+  padding-top: 16px;
+  text-align: center;
+}
+
+.content-section {
+  margin-top: 24px;
+}
+
+.ingredient-list {
+  list-style: none;
+  padding: 0;
+  li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    mat-icon {
+      margin-right: 8px;
+      color: #ffc107;
+    }
+  }
+}
+
+.loading-overlay,
+.error-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 400px;
+}
