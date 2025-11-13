@@ -38,13 +38,12 @@ module.exports = tseslint.config(
     rules: {},
   },
   {
-    files: ['src/app/store/cocktail.store.ts'], // Ajusta la ruta exacta
+    files: ['src/app/store/cocktail.store.ts'], 
     rules: {
-      // Desactiva la regla completamente para este archivo
+      
       'max-lines-per-function': 'off',
 
-      // Opcional: Aumenta el límite solo para este archivo
-      // "max-lines-per-function": ["error", { "max": 40 }]
+      
     },
   },
   {
