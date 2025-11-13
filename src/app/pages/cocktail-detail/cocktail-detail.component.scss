@@ -1,4 +1,4 @@
-/* ... (Estilos existentes) ... */
+
 .detail-container {
   display: flex;
 
@@ -18,8 +18,8 @@
 }
 .detail-header {
   display: flex;
-  flex-direction: row; /* Comportamiento en móvil: Imagen arriba, texto abajo */
-  gap: 16px; /* Añadir espacio entre imagen y texto */
+  flex-direction: row; 
+  gap: 16px; 
   align-items: flex-start;
 }
 
@@ -27,7 +27,7 @@
   height: 300px;
   object-fit: cover;
   border-radius: 4px;
-  width: 40%; /* La imagen ocupa el 40% del header en escritorio */
+  width: 40%; 
 }
 
 @keyframes pulse {
