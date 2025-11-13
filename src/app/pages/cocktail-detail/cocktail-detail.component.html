@@ -39,7 +39,7 @@
       
 
       <mat-card-actions>
-        <button mat-flat-button color="primary" [routerLink]="['/']">
+        <button mat-flat-button color="primary" (click)="goBack()">
           <mat-icon>arrow_back</mat-icon>
           Volver
         </button>

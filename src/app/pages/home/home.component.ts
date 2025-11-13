@@ -1,13 +1,21 @@
-// src/app/pages/home/home.component.ts
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card'; 
+import { MatCardModule } from '@angular/material/card';
+import { Router } from '@angular/router';
 
 import { CocktailService } from '../../services/cocktail.service';
-import { CocktailStore } from '../../store/cocktail.store';
+import { CocktailStore, broadcastChannel } from '../../store/cocktail.store';
 import {
   Subject,
   switchMap,
@@ -17,10 +25,14 @@ import {
   filter,
   takeUntil,
   Observable,
+  fromEvent,
 } from 'rxjs';
 import { CocktailSearchComponent } from '../../components/cocktail-search/cocktail-search.component';
 import { CocktailListComponent } from '../../components/cocktail-list/cocktail-list.component';
 import { Drink, DrinkApiResponse, IngredientApiResponse } from '../../models/cocktail.interface';
+
+const SCROLL_POSITION_KEY = 'home_scroll_position'; 
+const SEARCH_STATE_KEY = 'home_search_state'; 
 
 @Component({
   selector: 'app-home',
@@ -30,56 +42,176 @@ import { Drink, DrinkApiResponse, IngredientApiResponse } from '../../models/coc
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
-    MatCardModule, 
+    MatCardModule,
     CocktailSearchComponent,
     CocktailListComponent,
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   public store = inject(CocktailStore);
   private cocktailService = inject(CocktailService);
+  private router = inject(Router);
   private destroy$ = new Subject<void>();
 
-  
+  @ViewChild('scrollContainer') scrollContainerRef!: ElementRef<HTMLDivElement>;
+
   private searchTerm$ = new Subject<{ type: 'name' | 'ingredient' | 'id'; value: string }>();
 
-  // Exponer señales del store al template
+  
   public readonly displayCocktails = this.store.displayCocktails;
   public readonly isLoading = this.store.isLoading;
   public readonly filterOnlyFavorites = this.store.filterOnlyFavorites;
   public readonly hasFavorites = this.store.hasFavorites;
-  public readonly error = this.store.error; // Exponer el error del store
+  public readonly error = this.store.error;
 
   ngOnInit(): void {
+   
     this.store.loadFavoritesFromStorage();
+    
+    this._setupMultitabSync();
+    
     this._loadInitialData();
+    
     this._setupSearchStream();
   }
 
+  ngAfterViewInit(): void {
+    if (this.scrollContainerRef) {
+      this._restoreScrollPosition();
+      this._setupScrollSaving();
+    }
+  }
+
   ngOnDestroy(): void {
+    
+    this._saveScrollPosition();
+
+    
+    broadcastChannel.close();
     this.destroy$.next();
     this.destroy$.complete();
   }
 
   
+  // MANEJO DE ESTADO PERSISTENTE (SCROLL - sessionStorage)
+ 
+
+  private _setupScrollSaving(): void {
+    fromEvent(this.scrollContainerRef.nativeElement, 'scroll')
+      .pipe(debounceTime(100), takeUntil(this.destroy$))
+      .subscribe(() => this._saveScrollPosition());
+  }
+
+  private _saveScrollPosition(): void {
+    if (this.scrollContainerRef) {
+      sessionStorage.setItem(
+        SCROLL_POSITION_KEY,
+        this.scrollContainerRef.nativeElement.scrollTop.toString(),
+      );
+    }
+  }
+
+  private _restoreScrollPosition(): void {
+    const savedPosition = sessionStorage.getItem(SCROLL_POSITION_KEY);
+    if (savedPosition && this.scrollContainerRef) {
+      setTimeout(() => {
+        this.scrollContainerRef.nativeElement.scrollTop = parseInt(savedPosition, 10);
+      }, 0);
+    }
+  }
+
+ 
+  // MANEJO DE SINCRONIZACIÓN MULTITAB (BroadcastChannel)
+ 
+
+  private _setupMultitabSync(): void {
+    broadcastChannel.onmessage = (event) => {
+      if (!event.data) return;
+
+      if (event.data.type === 'FAVORITES_UPDATED') {
+        this.store.syncFavorites(event.data.payload as Drink[]);
+        console.log('Favoritos sincronizados desde otra pestaña.');
+      }
+
+      if (event.data.type === 'SEARCH_STATE_UPDATED') {
+        const state = event.data.payload;
+        if (!this.isLoading() && !this.filterOnlyFavorites()) {
+          this.store.patchState({
+            cocktails: state.cocktails,
+            lastSearchTerm: state.term,
+            isLoading: false,
+            error: null,
+          });
+        }
+      }
+    };
+  }
+
+  
+
+ 
+
   private _loadInitialData(): void {
+    if (this._tryRestoreSavedState()) {
+      return;
+    }
+
     if (this.store.cocktails().length === 0 && this.store.lastSearchTerm() === '') {
       this.performSearch({ type: 'name', value: 'a' });
     }
   }
 
-  
-   //Configura el pipeline reactivo para manejar el input de búsqueda.
-   
+  private _tryRestoreSavedState(): boolean {
+    
+    const savedState = localStorage.getItem(SEARCH_STATE_KEY);
+
+    if (!savedState) {
+      return false;
+    }
+
+    const state = this._parseSavedState(savedState);
+    if (!state) {
+     
+      localStorage.removeItem(SEARCH_STATE_KEY);
+      return false;
+    }
+
+    return this._restoreStateFromParsed(state);
+  }
+
+  private _parseSavedState(savedState: string): { term?: string; cocktails?: Drink[] } | null {
+    try {
+      return JSON.parse(savedState);
+    } catch {
+      return null;
+    }
+  }
+
+  private _restoreStateFromParsed(state: { term?: string; cocktails?: Drink[] }): boolean {
+    if (state.cocktails && state.cocktails.length > 0) {
+      this.store.patchState({
+        cocktails: state.cocktails,
+        lastSearchTerm: state.term,
+        isLoading: false,
+        error: null,
+      });
+      return true;
+    }
+    return false;
+  }
+
   private _setupSearchStream(): void {
     this.searchTerm$
       .pipe(
         debounceTime(300),
         distinctUntilChanged((prev, curr) => prev.value === curr.value && prev.type === curr.type),
         filter((term) => term.value.trim().length > 0),
-        tap((term) => this.store.startLoading(term.value)),
+        tap((term) => {
+          this.store.startLoading(term.value);
+          sessionStorage.removeItem(SCROLL_POSITION_KEY);
+        }),
         switchMap((term) => this.selectSearchMethod(term)),
         takeUntil(this.destroy$),
       )
@@ -88,21 +220,33 @@ export class HomeComponent implements OnInit, OnDestroy {
         error: (err) => this._handleSearchError(err),
       });
   }
-  
+
   private _handleSearchSuccess(response: DrinkApiResponse): void {
     const cocktails: Drink[] = response.drinks || [];
     this.store.setCocktails(cocktails);
+
+    const stateToSave = {
+      term: this.store.lastSearchTerm(),
+      cocktails: cocktails,
+    };
+
+    
+    localStorage.setItem(SEARCH_STATE_KEY, JSON.stringify(stateToSave));
+
+    // Notificar a otras pestañas
+    broadcastChannel.postMessage({
+      type: 'SEARCH_STATE_UPDATED',
+      payload: stateToSave,
+    });
   }
 
-  
-   // Maneja los errores de la llamada al API.
-   
   private _handleSearchError(err: unknown): void {
     console.error(err);
     this.store.setError('Error al conectar con la API o al procesar los datos.');
+  
+    localStorage.removeItem(SEARCH_STATE_KEY);
   }
 
-  
   private selectSearchMethod(term: {
     type: 'name' | 'ingredient' | 'id';
     value: string;
@@ -110,29 +254,23 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (term.type === 'name') {
       return this.cocktailService.searchByName(term.value);
     } else if (term.type === 'ingredient') {
-     
       return this.cocktailService.searchByIngredient(term.value);
     } else if (term.type === 'id') {
       return this.cocktailService.searchById(term.value);
     }
-    
+
     return this.cocktailService.searchByName(term.value);
   }
 
-  // Maneja la emisión del componente de búsqueda
   onSearch(term: { type: 'name' | 'ingredient' | 'id'; value: string }): void {
     this.searchTerm$.next(term);
   }
 
-  
   performSearch(term: { type: 'name' | 'ingredient' | 'id'; value: string }): void {
     this.searchTerm$.next(term);
   }
 
-  // Activa/desactiva el filtro de favoritos (usa el método del store)
   toggleFavoriteFilter(): void {
     this.store.toggleFilterFavorites();
   }
-
-  
 }
