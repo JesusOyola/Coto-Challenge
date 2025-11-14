@@ -6,6 +6,7 @@ import {
   ViewChild,
   ElementRef,
   AfterViewInit,
+  AfterViewChecked,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -31,8 +32,8 @@ import { CocktailSearchComponent } from '../../components/cocktail-search/cockta
 import { CocktailListComponent } from '../../components/cocktail-list/cocktail-list.component';
 import { Drink, DrinkApiResponse, IngredientApiResponse } from '../../models/cocktail.interface';
 
-const SCROLL_POSITION_KEY = 'home_scroll_position'; 
-const SEARCH_STATE_KEY = 'home_search_state'; 
+const SCROLL_POSITION_KEY = 'home_scroll_position';
+const SEARCH_STATE_KEY = 'home_search_state';
 
 @Component({
   selector: 'app-home',
@@ -49,7 +50,7 @@ const SEARCH_STATE_KEY = 'home_search_state';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
+export class HomeComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
   public store = inject(CocktailStore);
   private cocktailService = inject(CocktailService);
   private router = inject(Router);
@@ -57,9 +58,12 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('scrollContainer') scrollContainerRef!: ElementRef<HTMLDivElement>;
 
+  @ViewChild('errorMessageRef') errorMessageRef!: ElementRef<HTMLElement>;
+
   private searchTerm$ = new Subject<{ type: 'name' | 'ingredient' | 'id'; value: string }>();
 
-  
+  private lastErrorState: string | null = null;
+
   public readonly displayCocktails = this.store.displayCocktails;
   public readonly isLoading = this.store.isLoading;
   public readonly filterOnlyFavorites = this.store.filterOnlyFavorites;
@@ -67,13 +71,12 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   public readonly error = this.store.error;
 
   ngOnInit(): void {
-   
     this.store.loadFavoritesFromStorage();
-    
+
     this._setupMultitabSync();
-    
+
     this._loadInitialData();
-    
+
     this._setupSearchStream();
   }
 
@@ -84,19 +87,26 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  // Manejo del foco para accesibilidad cuando un error o mensaje de estado aparece
+  ngAfterViewChecked(): void {
+    const currentError = this.error();
+    if (currentError && currentError !== this.lastErrorState && this.errorMessageRef) {
+      setTimeout(() => {
+        this.errorMessageRef.nativeElement.focus();
+      }, 0);
+    }
+    this.lastErrorState = currentError;
+  }
+
   ngOnDestroy(): void {
-    
     this._saveScrollPosition();
 
-    
     broadcastChannel.close();
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  
   // MANEJO DE ESTADO PERSISTENTE (SCROLL - sessionStorage)
- 
 
   private _setupScrollSaving(): void {
     fromEvent(this.scrollContainerRef.nativeElement, 'scroll')
@@ -122,9 +132,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
- 
-  // MANEJO DE SINCRONIZACIÓN MULTITAB (BroadcastChannel)
- 
+  // MANEJO DE SINCRONIZACIÓN MULTITAB
 
   private _setupMultitabSync(): void {
     broadcastChannel.onmessage = (event) => {
@@ -137,21 +145,14 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
       if (event.data.type === 'SEARCH_STATE_UPDATED') {
         const state = event.data.payload;
+
         if (!this.isLoading() && !this.filterOnlyFavorites()) {
-          this.store.patchState({
-            cocktails: state.cocktails,
-            lastSearchTerm: state.term,
-            isLoading: false,
-            error: null,
-          });
+          this._restoreStateFromParsed(state);
+          console.log(`Búsqueda sincronizada: "${state.term}"`);
         }
       }
     };
   }
-
-  
-
- 
 
   private _loadInitialData(): void {
     if (this._tryRestoreSavedState()) {
@@ -164,7 +165,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private _tryRestoreSavedState(): boolean {
-    
     const savedState = localStorage.getItem(SEARCH_STATE_KEY);
 
     if (!savedState) {
@@ -173,7 +173,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const state = this._parseSavedState(savedState);
     if (!state) {
-     
       localStorage.removeItem(SEARCH_STATE_KEY);
       return false;
     }
@@ -190,7 +189,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private _restoreStateFromParsed(state: { term?: string; cocktails?: Drink[] }): boolean {
-    if (state.cocktails && state.cocktails.length > 0) {
+    if (state.cocktails && state.cocktails.length >= 0) {
       this.store.patchState({
         cocktails: state.cocktails,
         lastSearchTerm: state.term,
@@ -230,10 +229,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
       cocktails: cocktails,
     };
 
-    
     localStorage.setItem(SEARCH_STATE_KEY, JSON.stringify(stateToSave));
 
-    // Notificar a otras pestañas
     broadcastChannel.postMessage({
       type: 'SEARCH_STATE_UPDATED',
       payload: stateToSave,
@@ -243,7 +240,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   private _handleSearchError(err: unknown): void {
     console.error(err);
     this.store.setError('Error al conectar con la API o al procesar los datos.');
-  
+
     localStorage.removeItem(SEARCH_STATE_KEY);
   }
 
