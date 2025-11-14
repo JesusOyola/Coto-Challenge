@@ -1,4 +1,4 @@
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" role="navigation">
   <span>Cocktail Bar Manager</span>
 
   <span class="spacer"></span>
@@ -8,7 +8,7 @@
     [color]="filterOnlyFavorites() ? 'accent' : 'basic'"
     (click)="toggleFavoriteFilter()"
     [disabled]="!hasFavorites()"
-    aria-label="Mostrar solo tragos favoritos"
+    aria-label="Alternar entre todos los tragos y mis favoritos"
   >
     <mat-icon>{{ filterOnlyFavorites() ? 'favorite' : 'favorite_border' }}</mat-icon>
     {{ filterOnlyFavorites() ? 'Mostrar Todos' : 'Mis Favoritos' }}
@@ -17,10 +17,15 @@
 
 <app-cocktail-search (searchEvent)="onSearch($event)" />
 
-
-<div class="cocktail-list-container" #scrollContainer>
+<div class="cocktail-list-container" #scrollContainer role="main" tabindex="-1">
   @if (error()) {
-    <mat-card class="error-message">
+    <mat-card
+      class="error-message"
+      role="alert"
+      aria-live="assertive"
+      #errorMessageRef
+      tabindex="0"
+    >
       <mat-icon color="warn">error_outline</mat-icon>
       <h2>Error al cargar los datos:</h2>
       <p>{{ error() }}</p>
@@ -30,11 +35,24 @@
   <app-cocktail-list [cocktails]="displayCocktails()" [isLoading]="isLoading()" />
 
   @if (!isLoading() && filterOnlyFavorites() && displayCocktails().length === 0) {
-    <mat-card class="empty-filter-message">
+    <mat-card
+      class="empty-filter-message"
+      role="status"
+      aria-live="polite"
+      #errorMessageRef
+      tabindex="0"
+    >
       <mat-icon>sentiment_dissatisfied</mat-icon>
       <h2>No hay favoritos en tu lista.</h2>
       <p>Añade algunos cócteles para verlos aquí.</p>
-      <button mat-button color="primary" (click)="toggleFavoriteFilter()">Mostrar todos</button>
+      <button
+        mat-button
+        color="primary"
+        (click)="toggleFavoriteFilter()"
+        aria-label="Mostrar todos los cócteles"
+      >
+        Mostrar todos
+      </button>
     </mat-card>
   }
 
@@ -44,7 +62,13 @@
     displayCocktails().length === 0 &&
     store.lastSearchTerm().length > 0
   ) {
-    <mat-card class="empty-search-message">
+    <mat-card
+      class="empty-search-message"
+      role="status"
+      aria-live="polite"
+      #errorMessageRef
+      tabindex="0"
+    >
       <mat-icon>search_off</mat-icon>
       <h2>Búsqueda sin resultados.</h2>
       <p>No se encontraron cócteles para "{{ store.lastSearchTerm() }}".</p>
