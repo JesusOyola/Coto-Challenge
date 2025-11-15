@@ -33,6 +33,7 @@ export class CocktailCardComponent implements OnDestroy {
   private store = inject(CocktailStore);
   private overlayRef: OverlayRef | null = null;
   @Input({ required: true }) cocktail!: Drink;
+  
 
   // Signal computada para saber si es favorito
   public isFavorite = computed(() => this.store.isFavorite()(this.cocktail.idDrink));

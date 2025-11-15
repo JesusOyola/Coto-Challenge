@@ -32,3 +32,24 @@
   background-color: #ffebee;
   color: #c62828;
 }
+
+.favorites-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0;
+  padding: 8px 0;
+  border-bottom: 2px solid #e91e63; // color accent
+
+  h2 {
+    font-weight: 600;
+    font-size: 1.6rem;
+    margin: 0;
+    color: #e91e63; // mismo accent
+  }
+
+  .fav-icon {
+    color: #e91e63;
+    font-size: 28px;
+  }
+}

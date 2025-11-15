@@ -15,7 +15,14 @@
   </button>
 </mat-toolbar>
 
-<app-cocktail-search (searchEvent)="onSearch($event)" />
+@if (!filterOnlyFavorites()) {
+  <app-cocktail-search (searchEvent)="onSearch($event)" />
+} @else {
+  <div class="favorites-title">
+    <mat-icon class="fav-icon">favorite</mat-icon>
+    <h2>Mis Favoritos</h2>
+  </div>
+}
 
 <div class="cocktail-list-container" #scrollContainer role="main" tabindex="-1">
   @if (error()) {
@@ -35,7 +42,6 @@
   <app-cocktail-list [cocktails]="displayCocktails()" [isLoading]="isLoading()" />
 
   @if (!isLoading() && filterOnlyFavorites() && displayCocktails().length === 0) {
-    
     <mat-card
       class="empty-filter-message"
       role="status"
