@@ -41,10 +41,14 @@ mat-card-actions {
 }
 
 mat-card-actions button[mat-icon-button] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
   background-color: #f1f1f1;
   border-radius: 50%;
-  width: 38px;
-  height: 38px;
+  width: 45px;
+  height: 45px;
   transition: background 0.2s ease-in-out;
 }
 
@@ -60,8 +64,6 @@ mat-card-actions mat-icon {
 mat-card-actions button:hover mat-icon {
   color: #e91e63;
 }
-
-
 
 .custom-menu button[mat-menu-item] {
   cursor: pointer;

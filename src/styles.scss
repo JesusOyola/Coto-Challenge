@@ -1,41 +1,30 @@
 @use '@angular/material' as mat;
-
-:root {
-  --c-primary: #1976d2;
-
-  --c-primary-light: #3f51b5;
-
-  --c-accent: #e91e63;
-}
-
-html {
-  @include mat.theme(
-    (
-      color: (
-        theme-type: light,
-        primary: mat.$blue-palette,
-        tertiary: mat.$blue-palette,
-      ),
-      typography: (
-        plain-family: Roboto,
-        brand-family: Open Sans,
-        bold-weight: 900,
-        medium-weight: 500,
-        regular-weight: 300,
-      ),
-      density: 0,
-    )
-  );
-}
+@use './utils/scss/theme' as theme;
 
 body {
-  background: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
   margin: 0;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
+
+  background-color: var(--c-primary-dark);
+  color: rgba(0, 0, 0, 0.87);
 }
 
+/* Overrides para Material, usando las variables CSS */
 .mat-toolbar {
   background-color: var(--c-primary) !important;
   color: white !important;
+}
+
+.mat-flat-button.mat-primary {
+  background-color: var(--c-primary);
+  color: white;
+}
+
+.mat-flat-button.mat-accent {
+  background-color: var(--c-accent);
+  color: white;
+}
+
+.mat-flat-button.mat-warn {
+  background-color: var(--c-warn);
+  color: white;
 }
