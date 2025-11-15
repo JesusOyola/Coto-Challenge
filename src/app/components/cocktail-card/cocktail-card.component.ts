@@ -6,6 +6,7 @@ import {
   ElementRef,
   TemplateRef,
   computed,
+  OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -25,7 +26,7 @@ import { CocktailStore } from '../../store/cocktail.store';
   templateUrl: './cocktail-card.component.html',
   styleUrl: './cocktail-card.component.scss',
 })
-export class CocktailCardComponent {
+export class CocktailCardComponent implements OnDestroy {
   private overlay = inject(Overlay);
   private viewContainerRef = inject(ViewContainerRef);
   private elementRef = inject(ElementRef);
@@ -49,7 +50,6 @@ export class CocktailCardComponent {
       return;
     }
 
-    
     this.overlayRef = this._createOverlayRef();
 
     //  Adjunta el menú y configura el cierre
@@ -81,6 +81,13 @@ export class CocktailCardComponent {
   }
 
   closeMenu(): void {
+    if (this.overlayRef) {
+      this.overlayRef.dispose();
+      this.overlayRef = null;
+    }
+  }
+
+  ngOnDestroy(): void {
     if (this.overlayRef) {
       this.overlayRef.dispose();
       this.overlayRef = null;
