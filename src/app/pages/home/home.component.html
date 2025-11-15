@@ -35,6 +35,7 @@
   <app-cocktail-list [cocktails]="displayCocktails()" [isLoading]="isLoading()" />
 
   @if (!isLoading() && filterOnlyFavorites() && displayCocktails().length === 0) {
+    
     <mat-card
       class="empty-filter-message"
       role="status"

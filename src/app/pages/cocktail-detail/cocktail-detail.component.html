@@ -1,6 +1,47 @@
 <div class="detail-container">
+  <!-- SKELETON LOADER  -->
   @if (isLoading()) {
+    <mat-card class="detail-card skeleton-detail-card">
+      <div class="detail-header skeleton-detail-header">
+        <div class="skeleton-detail-image"></div>
+
+        <div class="title-section w-full md:w-3/5">
+          <div class="skeleton-line w-3/4 h-8 mb-4"></div>
+
+          <div class="skeleton-line w-1/2 h-5"></div>
+        </div>
+      </div>
+
+      <mat-card-content class="content-section pt-8">
+        <div class="skeleton-line w-2/5 h-6"></div>
+
+        <div class="skeleton-line w-full"></div>
+        <div class="skeleton-line w-11/12"></div>
+        <div class="skeleton-line w-10/12"></div>
+
+        <div class="skeleton-line w-1/4 h-6 mt-6"></div>
+
+        <!-- Lista de Ingredientes -->
+        <ul class="ingredient-list">
+          @for (i of [1, 2, 3]; track i) {
+            <li class="flex items-center">
+              <mat-icon class="text-transparent">local_bar</mat-icon>
+              <div
+                class="skeleton-line"
+                [ngClass]="{ 'w-3/5': i === 1, 'w-2/5': i === 2, 'w-4/5': i === 3 }"
+                style="height: 20px"
+              ></div>
+            </li>
+          }
+        </ul>
+      </mat-card-content>
+
+      <mat-card-actions class="flex justify-end pt-4">
+        <div class="skeleton-line w-24 h-10 rounded-full"></div>
+      </mat-card-actions>
+    </mat-card>
   } @else if (cocktailDetail()) {
+    <!-- CONTENIDO REAL -->
     <mat-card class="detail-card">
       <div class="detail-header">
         <img
@@ -9,33 +50,35 @@
           [src]="cocktailDetail()!.strDrinkThumb"
           [alt]="cocktailDetail()!.strDrink"
         />
-        <div class="title-section">
-          <mat-card-title>{{ cocktailDetail()!.strDrink }}</mat-card-title>
-          <mat-card-subtitle
+        <div class="title-section w-full md:w-3/5">
+          <mat-card-title class="text-3xl font-bold">{{
+            cocktailDetail()!.strDrink
+          }}</mat-card-title>
+          <mat-card-subtitle class="text-lg"
             >{{ cocktailDetail()!.strAlcoholic }} |
             {{ cocktailDetail()!.strCategory }}</mat-card-subtitle
           >
         </div>
-        <mat-card-content class="content-section">
-          <h3>Instrucciones de Preparación</h3>
-          <p>{{ cocktailDetail()!.strInstructions }}</p>
-
-          <h3>Ingredientes</h3>
-          <ul class="ingredient-list">
-            @for (item of ingredientsList(); track item.ingredient) {
-              <li>
-                <mat-icon>local_bar</mat-icon>
-                <span>
-                  <strong>{{ item.measure }}</strong>
-                  {{ item.ingredient }}
-                </span>
-              </li>
-            }
-          </ul>
-        </mat-card-content>
       </div>
+      <mat-card-content class="content-section pt-6">
+        <h3 class="text-xl font-semibold mt-4">Instrucciones de Preparación</h3>
+        <p class="text-gray-700">{{ cocktailDetail()!.strInstructions }}</p>
 
-      <mat-card-actions>
+        <h3 class="text-xl font-semibold mt-6">Ingredientes</h3>
+        <ul class="ingredient-list space-y-2">
+          @for (item of ingredientsList(); track item.ingredient) {
+            <li class="flex items-center">
+              <mat-icon class="mr-2 text-indigo-500">local_bar</mat-icon>
+              <span>
+                <strong class="font-medium">{{ item.measure }}</strong>
+                {{ item.ingredient }}
+              </span>
+            </li>
+          }
+        </ul>
+      </mat-card-content>
+
+      <mat-card-actions class="flex justify-end">
         <button mat-flat-button color="primary" (click)="goBack()">
           <mat-icon>arrow_back</mat-icon>
           Volver
@@ -43,6 +86,6 @@
       </mat-card-actions>
     </mat-card>
   } @else if (error()) {
-    <p class="error-message">{{ error() }}</p>
+    <p class="error-message text-red-600 font-medium">{{ error() }}</p>
   }
 </div>
