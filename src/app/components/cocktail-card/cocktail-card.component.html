@@ -1,6 +1,12 @@
 <mat-card class="cocktail-card">
   <a [routerLink]="['/detail', cocktail.idDrink]" class="card-link">
-    <img class="cocktail-img" mat-card-image [src]="cocktail.strDrinkThumb" [alt]="cocktail.strDrink" loading="lazy" />
+    <img
+      class="cocktail-img"
+      mat-card-image
+      [src]="cocktail.strDrinkThumb"
+      [alt]="cocktail.strDrink"
+      loading="lazy"
+    />
 
     <mat-card-header>
       <mat-card-title>{{ cocktail.strDrink }}</mat-card-title>

@@ -1,12 +1,18 @@
 .cocktail-card {
   position: relative;
   max-width: 350px;
-  transition: transform 0.2s;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.09);
 }
+
 .cocktail-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-8px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
 }
+
 .card-link {
   text-decoration: none;
   color: inherit;
@@ -17,9 +23,60 @@
   width: 100% !important;
   height: 100%;
   object-fit: cover;
+  border-radius: 16px 16px 0 0;
+}
+
+/* Título más elegante */
+mat-card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
 }
 
 mat-card-actions {
+  cursor: pointer;
   display: flex;
   justify-content: flex-end;
+  padding: 4px 8px;
+}
+
+mat-card-actions button[mat-icon-button] {
+  background-color: #f1f1f1;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  transition: background 0.2s ease-in-out;
+}
+
+mat-card-actions button[mat-icon-button]:hover {
+  background: #e0e0e0;
+}
+
+mat-card-actions mat-icon {
+  color: #555;
+  transition: color 0.2s ease-in-out;
+}
+
+mat-card-actions button:hover mat-icon {
+  color: #e91e63;
+}
+
+
+
+.custom-menu button[mat-menu-item] {
+  cursor: pointer;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  margin: 4px;
+}
+
+.custom-menu mat-icon {
+  color: #616161;
+}
+
+.custom-menu button:hover mat-icon {
+  color: #e91e63;
 }
