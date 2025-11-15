@@ -1,15 +1,14 @@
 <div class="list-grid" #scrollContainer>
-  @if (isLoading && cocktails.length === 0) {
+  @if (isLoading) {
     @for (item of skeletonItems; track item) {
       <app-cocktail-card-skeleton />
     }
-
   } @else {
     @for (cocktail of cocktails; track cocktail.idDrink) {
       <app-cocktail-card [cocktail]="cocktail" />
     }
 
-    @if (cocktails.length === 0 && !isLoading) {
+    @if (cocktails.length === 0) {
       <p class="no-results">No se encontraron cócteles.</p>
     }
   }
