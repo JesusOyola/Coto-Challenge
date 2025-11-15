@@ -12,7 +12,7 @@ const initialState: CocktailState = {
   filterOnlyFavorites: false,
 };
 
-const FAVORITES_STORAGE_KEY = 'cocktail_favorites';
+export const FAVORITES_STORAGE_KEY = 'cocktail_favorites';
 
 const broadcastChannel = new BroadcastChannel('cocktail-sync-channel');
 

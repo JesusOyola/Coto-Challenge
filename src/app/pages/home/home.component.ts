@@ -13,7 +13,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { Router } from '@angular/router';
+
 
 import { CocktailService } from '../../services/cocktail.service';
 import { CocktailStore, broadcastChannel } from '../../store/cocktail.store';
@@ -53,8 +53,7 @@ const SEARCH_STATE_KEY = 'home_search_state';
 export class HomeComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
   public store = inject(CocktailStore);
   private cocktailService = inject(CocktailService);
-  private router = inject(Router);
-  private destroy$ = new Subject<void>();
+  public destroy$ = new Subject<void>();
 
   @ViewChild('scrollContainer') scrollContainerRef!: ElementRef<HTMLDivElement>;
 
@@ -69,6 +68,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit, AfterVie
   public readonly filterOnlyFavorites = this.store.filterOnlyFavorites;
   public readonly hasFavorites = this.store.hasFavorites;
   public readonly error = this.store.error;
+  public broadcastChannel?: BroadcastChannel;
 
   ngOnInit(): void {
     this.store.loadFavoritesFromStorage();

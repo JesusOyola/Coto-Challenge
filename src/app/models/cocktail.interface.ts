@@ -53,7 +53,7 @@ export interface Drink {
 }
 
 export interface DrinkApiResponse {
-  drinks: Drink[];
+  drinks: Drink[] | null;
 }
 
 export interface Ingredient {
